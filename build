@@ -1,0 +1,2 @@
+FLTK=../../fltk-1.3-svn
+$FLTK/fltk-config --use-images --compile starfield.cxx
