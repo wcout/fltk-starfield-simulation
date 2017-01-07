@@ -328,6 +328,7 @@ int main( int argc, char **argv )
 	Fl_Color bgcolor( BGCOLOR );
 	Fl_Color fgcolor( FGCOLOR );
 	uchar r, g, b;
+	bool fullscreen( false );
 	for ( int i = 1; i < argc; i++ )
 	{
 		// allow setting an image for a star
@@ -335,6 +336,11 @@ int main( int argc, char **argv )
 			StarImageName = argv[i];
 		else
 		{
+			if ( strcmp( &argv[i][1], "f" ) == 0 )
+			{
+				fullscreen = true;
+				continue;
+			}
 			if ( i + 1 >= argc )
 				break;
 			i++;
@@ -367,5 +373,7 @@ int main( int argc, char **argv )
 	window->labelcolor( fgcolor );
 	window->resizable( window );
 	window->show();
+	if ( fullscreen )
+		window->fullscreen();
 	return Fl::run();
 }
