@@ -1,16 +1,34 @@
 /*
 
+ Starfield simulation in FLTK.
+
  (c) 2009-2017 wcout wcout<wcout@gmx.net>
 
- I TRANSLATED AND ENHANCED THE FOLLOWING PROGRAM
- WRITTEN IN SMALLBASIC LANGUAGE (SMALLBASIC BY CHRISWS)
- TO C++ AND FLTK.
+ I translated and enhanced a program written in
+ SmallBasic language (SmallBasic by ChrisWS)
+ to C++ and FLTK.
 
- THE ORIGINAL SOURCE CAN BE FOUND HERE:
+ I found this code about 2009 "in the web", transcoded
+ it and have improved it slowly over the years, then
+ forgot about it for some more years and now (2017)
+ have found it again and decided to make it public.
 
- http://smallbasic.sourceforge.net/?q=node/21
+ As there is no explicit claim for non free code in
+ the original source, I "assume" it can be modified
+ and redistributed freely.
 
- AND HERE BELOW:
+ Should this assumption be wrong, please mail me
+ and I will remove it from public access.
+
+ This translated code can be used and modified freely
+ without any restrictions **in the assumption the original
+ code is free too**.
+
+ The original source can be found under this link:
+
+    http://smallbasic.sourceforge.net/?q=node/21
+
+ and is also pasted here below:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 '10/4/04 3:22:23 PM
