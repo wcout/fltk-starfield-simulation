@@ -141,7 +141,7 @@ private:
 	double dir;
 	Fl_Widget *box;
 	int numStars;
-	Fl_Image *_image;
+	Fl_Shared_Image *_image;
 private:
 	void move_stars();
 	static void cb( Fl_Widget *w_, void *data_ );
@@ -184,10 +184,10 @@ StarField::StarField( int w_, int h_, const char *l_ ) :
 	color( Fl::get_color( FL_BACKGROUND_COLOR ) );
 	if ( StarImageName )
 	{
-		_image = new Fl_GIF_Image( StarImageName );
+		_image = Fl_Shared_Image::get( StarImageName );
 		if ( _image->w() <= 0 || _image->h() <= 0 )
 		{
-			delete _image;
+			_image->release();
 			_image = 0;
 		}
 		else if ( MAXSTARS == 256 )
@@ -223,6 +223,7 @@ StarField::StarField( int w_, int h_, const char *l_ ) :
 StarField::~StarField()
 {
 	delete[] stars;
+	_image->release();
 }
 
 /*static*/
@@ -261,10 +262,13 @@ void StarField::draw()
 				continue;
 			if ( _image )
 			{
-				Fl_Image *image = _image->copy( stars[i].z + 10, stars[i].z + 10 );
-				image->color_average( color(), float( stars[i].z  + 1 ) / (float)LENS );
-				image->draw( stars[i].dx - image->w() / 2, stars[i].dy - image->h() / 2 );
-				delete image;
+				Fl_Shared_Image *image = Fl_Shared_Image::find( _image->name(), stars[i].z + 10, stars[i].z + 10 );
+				if ( !image )
+					image = _image->get( _image->name(), stars[i].z + 10, stars[i].z + 10 );
+				Fl_Image *temp = image->copy( image->w(), image->h() );
+				temp->color_average( color(), float( stars[i].z  + 1 )/ (float)LENS );
+				temp->draw( stars[i].dx - temp->w() / 2, stars[i].dy - temp->h() / 2 );
+				delete temp;
 			}
 			else
 			{
