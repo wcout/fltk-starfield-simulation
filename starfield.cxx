@@ -235,10 +235,10 @@ void StarField::cb( Fl_Widget *w_, void *data_ )
 	{
 		// Double click - toggle fullscreen and rotation
 		w->dir = -w->dir;
-		if ( w->dir <  0 )
-			w->fullscreen();
-		else
+		if ( w->fullscreen_active() )
 			w->fullscreen_off( 100, 100, 800, 600 );
+		else
+			w->fullscreen();
 		Fl::event_is_click( 0 );
 		midx = -1;
 		midy = -1;
