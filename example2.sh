@@ -1,2 +1,2 @@
 #!bin/sh
-./starfield -n 1000 -bg darkblue -fg yellow
+./starfield -n 1000 -bg darkblue -fg yellow $1
