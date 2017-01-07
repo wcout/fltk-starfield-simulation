@@ -200,7 +200,6 @@ StarField::StarField( int w_, int h_, const char *l_ ) :
 	numStars( MAXSTARS ),
 	_image( 0 )
 {
-	color( Fl::get_color( FL_BACKGROUND_COLOR ) );
 	if ( StarImageName )
 	{
 		_image = Fl_Shared_Image::get( StarImageName );
@@ -277,14 +276,18 @@ void StarField::draw()
 	{
 		for ( int i = 0; i < numStars; i++ )
 		{
+			// draw one distance layer after the other..
 			if ( stars[i].z != z )
 				continue;
 			if ( _image )
 			{
+				// draw star images
 				int sz = (float)( stars[i].z + 10 ) * ZoomFactor;
+				// This should cache all needed image sizes to speed up drawing
 				Fl_Shared_Image *image = Fl_Shared_Image::find( _image->name(), sz, sz );
 				if ( !image )
 					image = _image->get( _image->name(), sz, sz );
+				// Just for color averaging we still need a temporary 1:1 copy..
 				Fl_Image *temp = image->copy( image->w(), image->h() );
 				temp->color_average( color(), float( stars[i].z  + 1 )/ (float)LENS );
 				temp->draw( stars[i].dx - temp->w() / 2, stars[i].dy - temp->h() / 2 );
@@ -292,6 +295,7 @@ void StarField::draw()
 			}
 			else
 			{
+				// draw star 'dots'
 				Fl_Color c = fl_color_average( labelcolor(), color(), float( stars[i].color ) / LENS );
 				fl_color( c );
 				fl_pie( stars[i].dx, stars[i].dy, stars[i].size, stars[i].size, 0., 360. );
