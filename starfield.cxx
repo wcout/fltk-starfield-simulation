@@ -157,6 +157,7 @@ static const Fl_Color BGCOLOR = FL_BLACK;
 static const Fl_Color FGCOLOR = FL_WHITE;
 static const int MAXSTARSIZE = 6;
 static char *StarImageName = 0;
+static double ZoomFactor = 1. / 3;
 static int midx = -1;
 static int midy = -1;
 
@@ -175,10 +176,10 @@ public:
 
 StarField::StarField( int w_, int h_, const char *l_ ) :
 	Inherited( w_, h_ ),
+	stars( 0 ),
 	angleZ( 0 ),
 	dir( 0.5 ),     // rotate by 0.5 degree / frame
 	numStars( MAXSTARS ),
-	stars( 0 ),
 	_image( 0 )
 {
 	color( Fl::get_color( FL_BACKGROUND_COLOR ) );
@@ -262,9 +263,10 @@ void StarField::draw()
 				continue;
 			if ( _image )
 			{
-				Fl_Shared_Image *image = Fl_Shared_Image::find( _image->name(), stars[i].z + 10, stars[i].z + 10 );
+				int sz = (float)( stars[i].z + 10 ) * ZoomFactor;
+				Fl_Shared_Image *image = Fl_Shared_Image::find( _image->name(), sz, sz );
 				if ( !image )
-					image = _image->get( _image->name(), stars[i].z + 10, stars[i].z + 10 );
+					image = _image->get( _image->name(), sz, sz );
 				Fl_Image *temp = image->copy( image->w(), image->h() );
 				temp->color_average( color(), float( stars[i].z  + 1 )/ (float)LENS );
 				temp->draw( stars[i].dx - temp->w() / 2, stars[i].dy - temp->h() / 2 );
@@ -340,6 +342,14 @@ int main( int argc, char **argv )
 			if ( strcmp( &argv[i-1][1], "n" ) == 0 )
 			{
 				MAXSTARS = atoi( argv[i] );
+				continue;
+			}
+			// allow changing number of stars
+			else if ( strcmp( &argv[i-1][1], "z" ) == 0 )
+			{
+				ZoomFactor = atof( argv[i] );
+				if ( ZoomFactor <= 0. || ZoomFactor > 10 )
+					ZoomFactor = 1.;
 				continue;
 			}
 			// parse color value 'name' or '#rrggbb'
