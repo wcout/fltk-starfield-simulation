@@ -336,6 +336,7 @@ int main( int argc, char **argv )
 			StarImageName = argv[i];
 		else
 		{
+			// allow fullscreen
 			if ( strcmp( &argv[i][1], "f" ) == 0 )
 			{
 				fullscreen = true;
@@ -350,7 +351,7 @@ int main( int argc, char **argv )
 				MAXSTARS = atoi( argv[i] );
 				continue;
 			}
-			// allow changing number of stars
+			// allow changing zoom of star image
 			else if ( strcmp( &argv[i-1][1], "z" ) == 0 )
 			{
 				ZoomFactor = atof( argv[i] );
