@@ -155,10 +155,10 @@ public:
 	~StarField();
 	virtual int handle( int e_ );
 private:
-	Star *stars;
-	double angleZ;
+	Star *_stars;
+	double _angleZ;
 	double _dir;
-	int numStars;
+	int _numStars;
 	Fl_Shared_Image *_image;
 	int _midx;
 	int _midy;
@@ -193,10 +193,10 @@ public:
 
 StarField::StarField( int w_, int h_, const char *l_ ) :
 	Inherited( w_, h_ ),
-	stars( 0 ),
-	angleZ( 0 ),
+	_stars( 0 ),
+	_angleZ( 0 ),
 	_dir( 0.5 ),     // rotate by 0.5 degree / frame
-	numStars( MAXSTARS ),
+	_numStars( MAXSTARS ),
 	_image( 0 ),
 	_midx( -1 ),
 	_midy( -1 )
@@ -211,33 +211,33 @@ StarField::StarField( int w_, int h_, const char *l_ ) :
 		}
 		else if ( MAXSTARS == 256 )
 		{
-			numStars = 16;
+			_numStars = 16;
 		}
 	}
 	char title[100];
 	snprintf( title, sizeof( title ), "%s (%d %s)",
-		l_, numStars, (_image ? StarImageName : "stars" ) );
+		l_, _numStars, (_image ? StarImageName : "stars" ) );
 	copy_label( title );
 	int xmid = w() / 2;
 	int ymid = h() / 2;
-	stars = new Star[ numStars ];
-	for ( int i = 0; i < numStars; i++ )
+	_stars = new Star[ _numStars ];
+	for ( int i = 0; i < _numStars; i++ )
 	{
-		stars[i].x = -xmid / 2 + random() % xmid;
-		stars[i].y = -ymid / 2 + random() % ymid;
-		stars[i].z = random() % LENS;
-		stars[i].speed = 2; //+ random()%5;
-		stars[i].size = random() % MAXSTARSIZE + 1;
-		stars[i].dx = stars[i].x;
-		stars[i].dy = stars[i].y;
-		stars[i].color = stars[i].z;
+		_stars[i].x = -xmid / 2 + random() % xmid;
+		_stars[i].y = -ymid / 2 + random() % ymid;
+		_stars[i].z = random() % LENS;
+		_stars[i].speed = 2; //+ random()%5;
+		_stars[i].size = random() % MAXSTARSIZE + 1;
+		_stars[i].dx = _stars[i].x;
+		_stars[i].dy = _stars[i].y;
+		_stars[i].color = _stars[i].z;
 	}
 	Fl::add_timeout( FPS, (Fl_Timeout_Handler)timer_cb, (void *)this );
 }
 
 StarField::~StarField()
 {
-	delete[] stars;
+	delete[] _stars;
 	_image->release();
 }
 
@@ -276,31 +276,31 @@ void StarField::draw()
 	Inherited::draw();
 	for ( int z = 0; z < LENS; z++ )
 	{
-		for ( int i = 0; i < numStars; i++ )
+		for ( int i = 0; i < _numStars; i++ )
 		{
 			// draw one distance layer after the other..
-			if ( stars[i].z != z )
+			if ( _stars[i].z != z )
 				continue;
 			if ( _image )
 			{
 				// draw star images
-				int sz = (float)( stars[i].z + 10 ) * ZoomFactor;
+				int sz = (float)( _stars[i].z + 10 ) * ZoomFactor;
 				// This should cache all needed image sizes to speed up drawing
 				Fl_Shared_Image *image = Fl_Shared_Image::find( _image->name(), sz, sz );
 				if ( !image )
 					image = _image->get( _image->name(), sz, sz );
 				// Just for color averaging we still need a temporary 1:1 copy..
 				Fl_Image *temp = image->copy( image->w(), image->h() );
-				temp->color_average( color(), float( stars[i].z  + 1 )/ (float)LENS );
-				temp->draw( stars[i].dx - temp->w() / 2, stars[i].dy - temp->h() / 2 );
+				temp->color_average( color(), float( _stars[i].z  + 1 )/ (float)LENS );
+				temp->draw( _stars[i].dx - temp->w() / 2, _stars[i].dy - temp->h() / 2 );
 				delete temp;
 			}
 			else
 			{
 				// draw star 'dots'
-				Fl_Color c = fl_color_average( labelcolor(), color(), float( stars[i].color ) / LENS );
+				Fl_Color c = fl_color_average( labelcolor(), color(), float( _stars[i].color ) / LENS );
 				fl_color( c );
-				fl_pie( stars[i].dx, stars[i].dy, stars[i].size, stars[i].size, 0., 360. );
+				fl_pie( _stars[i].dx, _stars[i].dy, _stars[i].size, _stars[i].size, 0., 360. );
 			}
 		}
 	}
@@ -308,28 +308,28 @@ void StarField::draw()
 
 void StarField::move_stars()
 {
-	angleZ += _dir;
-	double rangleZ = angleZ * PI / 180.0;
+	_angleZ += _dir;
+	double rangleZ = _angleZ * PI / 180.0;
 	double cosz = cos( rangleZ );
 	double sinz = sin( rangleZ );
 	int xmid = _midx >= 0 ? _midx : w() / 2;
 	int ymid = _midx >= 0 ? _midy : h() / 2;
-	for ( int i = 0; i < numStars; i++ )
+	for ( int i = 0; i < _numStars; i++ )
 	{
-		stars[i].z += stars[i].speed;
-		if ( stars[i].z >= LENS )
-			stars[i].z = 0;
-		double tsx = stars[i].x;
-		double tsy = stars[i].y;
-		int sz = stars[i].z;
+		_stars[i].z += _stars[i].speed;
+		if ( _stars[i].z >= LENS )
+			_stars[i].z = 0;
+		double tsx = _stars[i].x;
+		double tsy = _stars[i].y;
+		int sz = _stars[i].z;
 		double sx = ( tsx * cosz ) - ( tsy * sinz );
 		double sy = ( tsy * cosz ) + ( tsx * sinz );
 		int distance = LENS - sz;
 		if ( distance )
 		{
-			stars[i].dx = xmid + (int)( (double)LENS * ( sx / (double)distance ) );
-			stars[i].dy = ymid - (int)( (double)LENS * ( sy / (double)distance ) );
-			stars[i].color = sz;
+			_stars[i].dx = xmid + (int)( (double)LENS * ( sx / (double)distance ) );
+			_stars[i].dy = ymid - (int)( (double)LENS * ( sy / (double)distance ) );
+			_stars[i].color = sz;
 		}
 	}
 } // move_stars
