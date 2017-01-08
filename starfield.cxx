@@ -136,13 +136,10 @@ until
 
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl.H>
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Button.H>
 #include <FL/fl_draw.H>
 #include <cmath>
 #include <cstdlib>
 
-#include <FL/Fl_GIF_Image.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/x.H> // fl_parse_color()
 
@@ -155,28 +152,30 @@ public:
 	~StarField();
 	virtual int handle( int e_ );
 private:
-	Star *_stars;
-	double _angleZ;
-	double _dir;
-	int _numStars;
+	Star *_stars;              // array of 'stars'
+	double _angleZ;            // current rotation angle
+	double _dir;               // rotation increment
+	int _numStars;             // number of starts in array
 	Fl_Shared_Image *_image;
-	int _midx;
-	int _midy;
+	int _midx;                 // current x center of movement
+	int _midy;                 // current y center of movement
 private:
 	void move_stars();
 	static void timer_cb( StarField *w_, void *data_ );
 	virtual void draw();
 };
 
-static int MAXSTARS = 256;
+// currently fixed values
 static const int LENS = 256;
-static const double PI = 3.141592654;
-static double FPS = 1. / 25.;
-static const Fl_Color BGCOLOR = FL_BLACK;
-static const Fl_Color FGCOLOR = FL_WHITE;
-static const int MAXSTARSIZE = 6;
+static const int MAX_STAR_SIZE = 6;
+
+// command line changeable values
+static Fl_Color BgColor = FL_BLACK;
+static Fl_Color FgColor = FL_WHITE;
 static char *StarImageName = 0;
 static double ZoomFactor = 1. / 3;
+static int MaxStars = 256;
+static double Fps = 1. / 25.;
 
 class Star
 {
@@ -196,7 +195,7 @@ StarField::StarField( int w_, int h_, const char *l_ ) :
 	_stars( 0 ),
 	_angleZ( 0 ),
 	_dir( 0.5 ),     // rotate by 0.5 degree / frame
-	_numStars( MAXSTARS ),
+	_numStars( MaxStars ),
 	_image( 0 ),
 	_midx( -1 ),
 	_midy( -1 )
@@ -209,7 +208,7 @@ StarField::StarField( int w_, int h_, const char *l_ ) :
 			_image->release();
 			_image = 0;
 		}
-		else if ( MAXSTARS == 256 )
+		else if ( MaxStars == 256 )
 		{
 			_numStars = 16;
 		}
@@ -228,13 +227,13 @@ StarField::StarField( int w_, int h_, const char *l_ ) :
 		_stars[i].z = random() % LENS;
 		// Note: currently same speed for all stars, because it is "nicer" to watch
 		_stars[i].speed = 2; //+ random() % 2;
-		_stars[i].size = random() % MAXSTARSIZE + 1;
+		_stars[i].size = random() % MAX_STAR_SIZE + 1;
 		_stars[i].dx = _stars[i].x;
 		_stars[i].dy = _stars[i].y;
 		_stars[i].color = _stars[i].z;
 	}
 	move_stars();
-	Fl::add_timeout( FPS, (Fl_Timeout_Handler)timer_cb, (void *)this );
+	Fl::add_timeout( Fps, (Fl_Timeout_Handler)timer_cb, (void *)this );
 }
 
 StarField::~StarField()
@@ -311,7 +310,7 @@ void StarField::draw()
 void StarField::move_stars()
 {
 	_angleZ += _dir;
-	double rangleZ = _angleZ * PI / 180.0;
+	double rangleZ = _angleZ * M_PI / 180.0;
 	double cosz = cos( rangleZ );
 	double sinz = sin( rangleZ );
 	int xmid = _midx >= 0 ? _midx : w() / 2;
@@ -340,7 +339,7 @@ void StarField::move_stars()
 void StarField::timer_cb( StarField *w_, void *data_ )
 {
 	w_->redraw();
-	Fl::repeat_timeout( FPS, (Fl_Timeout_Handler)timer_cb, w_ );
+	Fl::repeat_timeout( Fps, (Fl_Timeout_Handler)timer_cb, w_ );
 	w_->move_stars();
 }
 
@@ -351,8 +350,6 @@ int main( int argc, char **argv )
 	Fl::get_system_colors();
 	// allow setting bg and fg color via commandline
 	// mimicks Fl::args() for -bg and -fg.
-	Fl_Color bgcolor( BGCOLOR );
-	Fl_Color fgcolor( FGCOLOR );
 	uchar r, g, b;
 	bool fullscreen( false );
 	for ( int i = 1; i < argc; i++ )
@@ -374,15 +371,15 @@ int main( int argc, char **argv )
 			// allow changing number of stars
 			if ( strcmp( &argv[i-1][1], "n" ) == 0 )
 			{
-				MAXSTARS = atoi( argv[i] );
+				MaxStars = atoi( argv[i] );
 				continue;
 			}
 			// allow changing speed
 			if ( strcmp( &argv[i-1][1], "s" ) == 0 )
 			{
-				FPS = atof( argv[i] );
-				if ( FPS < 0.001 || FPS > 0.5 )
-					FPS = 1. / 25;
+				Fps = atof( argv[i] );
+				if ( Fps < 0.001 || Fps > 0.5 )
+					Fps = 1. / 25;
 				continue;
 			}
 			// allow changing zoom of star image
@@ -398,14 +395,14 @@ int main( int argc, char **argv )
 			if ( !ok )
 				continue;
 			if ( strcmp( &argv[i-1][1], "bg" ) == 0 )
-				bgcolor = fl_rgb_color( r, g, b );
+				BgColor = fl_rgb_color( r, g, b );
 			else if ( strcmp( &argv[i-1][1], "fg" )  == 0 )
-				fgcolor = fl_rgb_color( r, g, b );
+				FgColor = fl_rgb_color( r, g, b );
 		}
 	}
 	Fl_Double_Window *window = new StarField( 800, 600, "starfield" );
-	window->color( bgcolor );
-	window->labelcolor( fgcolor );
+	window->color( BgColor );
+	window->labelcolor( FgColor );
 	window->resizable( window );
 	window->show();
 	if ( fullscreen )
