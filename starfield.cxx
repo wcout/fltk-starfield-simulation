@@ -381,7 +381,7 @@ int main( int argc, char **argv )
 			if ( strcmp( &argv[i-1][1], "s" ) == 0 )
 			{
 				FPS = atof( argv[i] );
-				if ( FPS <= 0.001 || FPS > 0.5 )
+				if ( FPS < 0.001 || FPS > 0.5 )
 					FPS = 1. / 25;
 				continue;
 			}
