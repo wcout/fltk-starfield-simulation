@@ -233,6 +233,7 @@ StarField::StarField( int w_, int h_, const char *l_ ) :
 		_stars[i].dy = _stars[i].y;
 		_stars[i].color = _stars[i].z;
 	}
+	move_stars();
 	Fl::add_timeout( FPS, (Fl_Timeout_Handler)timer_cb, (void *)this );
 }
 
