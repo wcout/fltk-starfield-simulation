@@ -153,16 +153,17 @@ class StarField : public Fl_Double_Window
 public:
 	StarField( int w_, int h_, const char *l_ = 0 );
 	~StarField();
+	virtual int handle( int e_ );
 private:
 	Star *stars;
 	double angleZ;
-	double dir;
-	Fl_Widget *box;
+	double _dir;
 	int numStars;
 	Fl_Shared_Image *_image;
+	int _midx;
+	int _midy;
 private:
 	void move_stars();
-	static void cb( Fl_Widget *w_, void *data_ );
 	static void timer_cb( StarField *w_, void *data_ );
 	virtual void draw();
 };
@@ -176,8 +177,6 @@ static const Fl_Color FGCOLOR = FL_WHITE;
 static const int MAXSTARSIZE = 6;
 static char *StarImageName = 0;
 static double ZoomFactor = 1. / 3;
-static int midx = -1;
-static int midy = -1;
 
 class Star
 {
@@ -196,9 +195,11 @@ StarField::StarField( int w_, int h_, const char *l_ ) :
 	Inherited( w_, h_ ),
 	stars( 0 ),
 	angleZ( 0 ),
-	dir( 0.5 ),     // rotate by 0.5 degree / frame
+	_dir( 0.5 ),     // rotate by 0.5 degree / frame
 	numStars( MAXSTARS ),
-	_image( 0 )
+	_image( 0 ),
+	_midx( -1 ),
+	_midy( -1 )
 {
 	if ( StarImageName )
 	{
@@ -217,9 +218,6 @@ StarField::StarField( int w_, int h_, const char *l_ ) :
 	snprintf( title, sizeof( title ), "%s (%d %s)",
 		l_, numStars, (_image ? StarImageName : "stars" ) );
 	copy_label( title );
-	box = new Fl_Button( 0, 0, w(), h() );
-	box->box( FL_NO_BOX );
-	box->visible_focus( 0 );
 	int xmid = w() / 2;
 	int ymid = h() / 2;
 	stars = new Star[ numStars ];
@@ -235,7 +233,6 @@ StarField::StarField( int w_, int h_, const char *l_ ) :
 		stars[i].color = stars[i].z;
 	}
 	Fl::add_timeout( FPS, (Fl_Timeout_Handler)timer_cb, (void *)this );
-	box->callback( cb, this );
 }
 
 StarField::~StarField()
@@ -244,29 +241,34 @@ StarField::~StarField()
 	_image->release();
 }
 
-/*static*/
-void StarField::cb( Fl_Widget *w_, void *data_ )
+/*virtual*/
+int StarField::handle( int e_ )
 {
-	StarField *w = (StarField *)data_;
+	int ret = Inherited::handle( e_ );
+	if ( FL_PUSH != e_ )
+		return ret;
+
+	// handle mouse click
 	if ( Fl::event_clicks() )
 	{
 		// Double click - toggle fullscreen and rotation
-		w->dir = -w->dir;
-		if ( w->fullscreen_active() )
-			w->fullscreen_off( 100, 100, 800, 600 );
+		_dir = -_dir;
+		if ( fullscreen_active() )
+			fullscreen_off( 100, 100, 800, 600 );
 		else
-			w->fullscreen();
+			fullscreen();
 		Fl::event_is_click( 0 );
-		midx = -1;
-		midy = -1;
+		_midx = -1;
+		_midy = -1;
 	}
 	else
 	{
 		// Single click - set center of movement
-		midx = Fl::event_x();
-		midy = Fl::event_y();
+		_midx = Fl::event_x();
+		_midy = Fl::event_y();
 	}
-} // cb
+	return ret;
+} // handle
 
 /*virtual*/
 void StarField::draw()
@@ -306,12 +308,12 @@ void StarField::draw()
 
 void StarField::move_stars()
 {
-	angleZ += dir;
+	angleZ += _dir;
 	double rangleZ = angleZ * PI / 180.0;
 	double cosz = cos( rangleZ );
 	double sinz = sin( rangleZ );
-	int xmid = midx >= 0 ? midx : w() / 2;
-	int ymid = midx >= 0 ? midy : h() / 2;
+	int xmid = _midx >= 0 ? _midx : w() / 2;
+	int ymid = _midx >= 0 ? _midy : h() / 2;
 	for ( int i = 0; i < numStars; i++ )
 	{
 		stars[i].z += stars[i].speed;
