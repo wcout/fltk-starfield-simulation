@@ -348,9 +348,6 @@ int main( int argc, char **argv )
 	fl_register_images();
 	Fl::visual( FL_RGB );
 	Fl::get_system_colors();
-	// allow setting bg and fg color via commandline
-	// mimicks Fl::args() for -bg and -fg.
-	uchar r, g, b;
 	bool fullscreen( false );
 	for ( int i = 1; i < argc; i++ )
 	{
@@ -390,6 +387,9 @@ int main( int argc, char **argv )
 					ZoomFactor = 1.;
 				continue;
 			}
+			// allow setting bg and fg color via commandline
+			// mimicks Fl::args() for -bg and -fg.
+			uchar r, g, b;
 			// parse color value 'name' or '#rrggbb'
 			int ok = fl_parse_color( argv[i], r, g, b );
 			if ( !ok )
