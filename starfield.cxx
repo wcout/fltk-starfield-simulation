@@ -203,12 +203,12 @@ StarField::StarField( int w_, int h_, const char *l_ ) :
 	if ( StarImageName )
 	{
 		_image = Fl_Shared_Image::get( StarImageName );
-		if ( _image->w() <= 0 || _image->h() <= 0 )
+		if ( _image && ( _image->w() <= 0 || _image->h() <= 0 ) )
 		{
 			_image->release();
 			_image = 0;
 		}
-		else if ( MaxStars == 256 )
+		else if ( _image && MaxStars == 256 )
 		{
 			_numStars = 16;
 		}
