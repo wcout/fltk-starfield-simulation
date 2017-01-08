@@ -171,7 +171,7 @@ private:
 static int MAXSTARS = 256;
 static const int LENS = 256;
 static const double PI = 3.141592654;
-static const double FPS = 1. / 25.;
+static double FPS = 1. / 25.;
 static const Fl_Color BGCOLOR = FL_BLACK;
 static const Fl_Color FGCOLOR = FL_WHITE;
 static const int MAXSTARSIZE = 6;
@@ -226,7 +226,8 @@ StarField::StarField( int w_, int h_, const char *l_ ) :
 		_stars[i].x = -xmid / 2 + random() % xmid;
 		_stars[i].y = -ymid / 2 + random() % ymid;
 		_stars[i].z = random() % LENS;
-		_stars[i].speed = 2; //+ random()%5;
+		// Note: currently same speed for all stars, because it is "nicer" to watch
+		_stars[i].speed = 2; //+ random() % 2;
 		_stars[i].size = random() % MAXSTARSIZE + 1;
 		_stars[i].dx = _stars[i].x;
 		_stars[i].dy = _stars[i].y;
@@ -373,6 +374,14 @@ int main( int argc, char **argv )
 			if ( strcmp( &argv[i-1][1], "n" ) == 0 )
 			{
 				MAXSTARS = atoi( argv[i] );
+				continue;
+			}
+			// allow changing speed
+			if ( strcmp( &argv[i-1][1], "s" ) == 0 )
+			{
+				FPS = atof( argv[i] );
+				if ( FPS <= 0.001 || FPS > 0.5 )
+					FPS = 1. / 25;
 				continue;
 			}
 			// allow changing zoom of star image
