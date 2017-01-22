@@ -1,7 +1,8 @@
-FLTK := ../../fltk-1.3-svn
-FLTK_CONFIG := $(FLTK)/fltk-config
+# If using a not installed FLTK version, specify it's path here (with '/' at end)
+#FLTK := ../fltk-1.3/
+FLTK_CONFIG := $(FLTK)fltk-config
 
-SRC :=  starfield.cxx
+SRC := starfield.cxx
 OBJ := $(SRC:.cxx=.o)
 TGT := $(SRC:.cxx=)
 
