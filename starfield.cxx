@@ -137,6 +137,7 @@ until
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
+#include <FL/filename.H>
 #include <cmath>
 #include <cstdlib>
 
@@ -356,6 +357,15 @@ int main( int argc, char **argv )
 			StarImageName = argv[i];
 		else
 		{
+			if ( strcmp( argv[i], "--help" ) == 0 )
+			{
+				printf( "Usage:\n%s [-s speedfactor] [-z zoomfactor] [-bg bgcolor] [-fg fgcolor] [-n numberofstars] [starimage]\n"
+				        "   speedfactor ... [0.001, 0.5] 1/sec\n"
+				        "   zoomfactor .... [0., 10.]\n"
+				        "   starimage ..... image filename for star\n",
+				        fl_filename_name( argv[0] ) );
+				return 0;
+			}
 			// allow fullscreen
 			if ( strcmp( &argv[i][1], "f" ) == 0 )
 			{
