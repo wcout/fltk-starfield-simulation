@@ -1,2 +1,0 @@
-FLTK=../../fltk-1.3-svn
-g++ -O2 -Wall -o starfield `$FLTK/fltk-config --use-images --cxxflags` starfield.cxx `$FLTK/fltk-config --use-images --ldflags`

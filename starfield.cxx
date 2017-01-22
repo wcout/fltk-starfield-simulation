@@ -292,7 +292,7 @@ void StarField::draw()
 					image = _image->get( _image->name(), sz, sz );
 				// Just for color averaging we still need a temporary 1:1 copy..
 				Fl_Image *temp = image->copy( image->w(), image->h() );
-				temp->color_average( color(), float( _stars[i].z  + 1 )/ (float)LENS );
+				temp->color_average( color(), float( _stars[i].z + 1 )/ (float)LENS );
 				temp->draw( _stars[i].dx - temp->w() / 2, _stars[i].dy - temp->h() / 2 );
 				delete temp;
 			}
@@ -396,7 +396,7 @@ int main( int argc, char **argv )
 				continue;
 			if ( strcmp( &argv[i-1][1], "bg" ) == 0 )
 				BgColor = fl_rgb_color( r, g, b );
-			else if ( strcmp( &argv[i-1][1], "fg" )  == 0 )
+			else if ( strcmp( &argv[i-1][1], "fg" ) == 0 )
 				FgColor = fl_rgb_color( r, g, b );
 		}
 	}

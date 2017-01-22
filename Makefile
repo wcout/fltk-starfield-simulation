@@ -1,0 +1,9 @@
+FLTK := ../../fltk-1.3-svn
+FLTK_CONFIG := $(FLTK)/fltk-config
+
+SRC :=  starfield.cxx
+OBJ := $(SRC:.cxx=.o)
+TGT := $(SRC:.cxx=)
+
+all:
+	$(CXX) -O2 -Wall -o $(TGT) `$(FLTK_CONFIG) --use-images --cxxflags` $(SRC) `$(FLTK_CONFIG) --use-images --ldflags`
