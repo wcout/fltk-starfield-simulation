@@ -26,7 +26,7 @@
 
  The original source can be found under this link:
 
-    http://smallbasic.sourceforge.net/?q=node/21
+    http://smallbasic.sourceforge.net/?q=node/833
 
  and is also pasted here below:
 
