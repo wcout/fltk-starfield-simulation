@@ -1,7 +1,7 @@
 # FLTK Starfield Simulation Demo
 `v1.0: 2017/01/22`
 
-##Introduction
+## Introduction
 
 This tiny program shows off `FLTK`'s simple concepts
 combined with powerful drawing methods very well,
@@ -12,7 +12,7 @@ only because of the different options it can handle, which
 inevitably blow up the code a little.
 
 ---
-##History (cited from comment in source file)
+## History (cited from comment in source file)
 
 
 I translated and enhanced a program written in
@@ -41,7 +41,7 @@ The original source can be found under this link:
 
 ---
 
-##Description
+## Description
 
 This program simulates parallactic movement through a star field.
 'Stars' can be of any number and can also be images. Also speed and
